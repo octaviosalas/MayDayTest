@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,10 +10,10 @@ interface Props {
 }
 
 const ForecastCardData = ({ dailyData }: Props) => {
-  if (!dailyData) return null; // Maneja el caso en que no hay datos
+  if (!dailyData) return null; 
 
   return (
-        <Box sx={{ minWidth: 275, display:"flex" }}>
+        <Box sx={{ minWidth: 275,  display: "flex",  gap: "10px", flexDirection: { xs: "column", md: "row" }  }}>
             {Object.entries(dailyData).map(([date, data]) => (
                 <Card variant="outlined" key={date} sx={{ mb: 2 }}>
                 <CardContent>

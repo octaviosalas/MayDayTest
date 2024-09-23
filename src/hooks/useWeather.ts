@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { WeatherDataType, DailyDataType, ForecastItem, Weather } from '../types/wheater';
+import handleError from '../utils/handleError';
+import { shootErrorToast } from '../utils/toastError';
 
 const useWeather = (city: string) => {
 
@@ -12,7 +14,7 @@ const useWeather = (city: string) => {
 
   useEffect(() => {
     const fetchWeather = async () => {
-      if (!city) return;
+      if (!city)  return console.log("#");
       setLoading(true);
       setError(null);
 
@@ -23,7 +25,6 @@ const useWeather = (city: string) => {
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
         );
         setWeatherData(response.data);
-        console.log("Weather Data:", response.data);
 
         const forecastResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`
@@ -31,10 +32,11 @@ const useWeather = (city: string) => {
 
         const processedDailyData = getForecastOfNextFiveDays(forecastResponse.data.list);
         setDailyData(processedDailyData);
-        console.log("Daily Data:", processedDailyData);
 
       } catch (err) {
-        console.log(err);
+        setWeatherData(null)
+        setDailyData(null)
+        handleError(err, setLoading)
       } finally {
         setLoading(false);
       }

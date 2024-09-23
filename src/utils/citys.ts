@@ -1,4 +1,4 @@
-[
+export const possibleCitys = [
     "Tokyo",
     "New York",
     "London",

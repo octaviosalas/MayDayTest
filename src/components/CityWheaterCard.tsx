@@ -7,6 +7,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import CardActions from '@mui/material/CardActions';
 import { WeatherDataType } from '../types/wheater';
 import { transformToCelcius } from '../utils/transformToCelcius';
+import Avatar from '@mui/material/Avatar';
 
 interface Props { 
     wheaterData: WeatherDataType | null,
@@ -16,11 +17,9 @@ const CityWeatherCard = ({wheaterData}: Props) => {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
-        <CardMedia
-          component="img"
-          height="140"
-          image={`http://openweathermap.org/img/wn/${wheaterData?.weather[0].icon}.png`} 
-        />
+        <div style={{display:"flex", alignItems:"center", justifyContent: "center"}}>
+           <Avatar alt="Remy Sharp" style={{width: "40%",  height: "40%"}} src={`http://openweathermap.org/img/wn/${wheaterData?.weather[0].icon}.png`} />
+        </div>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {wheaterData?.name}
