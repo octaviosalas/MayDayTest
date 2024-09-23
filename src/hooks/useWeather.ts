@@ -1,28 +1,40 @@
-/* import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { WeatherDataType, DailyDataType, ForecastItem, Weather } from '../types/wheater';
 
-const API_KEY = 'Tdf902cda551715e4e6122f24bf321640'; 
+const useWeather = (city: string) => {
 
-const useWeather = (city : string) => {
-
-  const [weatherData, setWeatherData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [weatherData, setWeatherData] = useState<WeatherDataType | null>(null);
+  const [dailyData, setDailyData] = useState<DailyDataType| null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
+
   useEffect(() => {
     const fetchWeather = async () => {
       if (!city) return;
-
       setLoading(true);
       setError(null);
 
       try {
+        const apiKey = import.meta.env.VITE_API_KEY;
+
         const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
         );
         setWeatherData(response.data);
+        console.log("Weather Data:", response.data);
+
+        const forecastResponse = await axios.get(
+          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`
+        );
+
+        const processedDailyData = getForecastOfNextFiveDays(forecastResponse.data.list);
+        setDailyData(processedDailyData);
+        console.log("Daily Data:", processedDailyData);
+
       } catch (err) {
-        setError(err.response ? err.response.data.message : 'Error fetching weather data');
+        console.log(err);
       } finally {
         setLoading(false);
       }
@@ -31,7 +43,28 @@ const useWeather = (city : string) => {
     fetchWeather();
   }, [city]);
 
-  return { weatherData, loading, error };
+  const getForecastOfNextFiveDays = (forecastList: ForecastItem[]) => {
+    const dailyData: { [key: string]: { temp_max: number; temp_min: number; weather: Weather[] } } = {};
+
+    forecastList.forEach(item => {
+      const date = new Date(item.dt * 1000).toISOString().split('T')[0]; 
+      if (!dailyData[date]) {
+        dailyData[date] = {
+          temp_max: item.main.temp_max,
+          temp_min: item.main.temp_min,
+          weather: item.weather,
+        };
+      } else {
+        dailyData[date].temp_max = Math.max(dailyData[date].temp_max, item.main.temp_max);
+        dailyData[date].temp_min = Math.min(dailyData[date].temp_min, item.main.temp_min);
+      }
+    });
+
+    return dailyData; 
+  };
+
+  return { weatherData, dailyData, loading, error };
 };
 
-export default useWeather; */
+export default useWeather;
+
