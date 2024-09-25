@@ -33,6 +33,42 @@ export const ThemeToggleProvider = ({ children }: ThemeToggleProviderProps) => {
       createTheme({
         palette: {
           mode,
+          ...(mode === 'dark' && {
+            background: {
+              default: '#121212', // Fondo negro en modo oscuro
+              paper: '#1e1e1e',
+            },
+            text: {
+              primary: '#ffffff',
+            },
+          }),
+        },
+        components: {
+          MuiTextField: {
+            styleOverrides: {
+              root: {
+                backgroundColor: '#ffffff', // Fondo blanco para el input en ambos modos
+                '& .MuiInputBase-input': {
+                  color: mode === 'dark' ? '#000000' : '#000000', // Texto negro en ambos modos
+                },
+                '& .MuiInputLabel-root': {
+                  color: mode === 'dark' ? '#ffffff' : '#000000', // Color del label (placeholder)
+                },
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: '#ffffff', // Fondo blanco para el input
+                  '& fieldset': {
+                    borderColor: '#000000', // Borde negro
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#000000', // Borde negro al hacer hover
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#000000', // Borde negro cuando el input está enfocado
+                  },
+                },
+              },
+            },
+          },
         },
       }),
     [mode]

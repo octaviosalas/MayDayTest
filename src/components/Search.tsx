@@ -6,6 +6,7 @@ import CityWeatherCard from './CityWheaterCard';
 import ForecastCardData from './ForecastCardData';
 import { possibleCitys } from '../utils/citys';
 import { Autocomplete } from '@mui/material';
+import { ToggleButton } from './ToggleBtn';
 
 const Search = () => {
   
@@ -24,7 +25,7 @@ const Search = () => {
 
   return (
     <div style={{ position: 'fixed', top: 0, width: '100%', backgroundColor: '#fff', zIndex: 1000, padding: '10px'}}>
-      
+      <ToggleButton/>
       <Autocomplete freeSolo options={possibleCitys} onInputChange={handleInputChange}
        renderInput={(params) => (
           <TextField {...params} label="Buscar ciudad" variant="outlined" />
