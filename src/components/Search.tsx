@@ -1,5 +1,5 @@
 import {  useState } from 'react';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Box } from '@mui/material';
 import useWeather from '../hooks/useWeather'; 
 import SpinnerComponent from './Spinner';
 import CityWeatherCard from './CityWheaterCard';
@@ -7,15 +7,16 @@ import ForecastCardData from './ForecastCardData';
 import { possibleCitys } from '../utils/citys';
 import { Autocomplete } from '@mui/material';
 import { ToggleButton } from './ToggleBtn';
+import { useThemeToggle } from '../store/themeContext';
 
 const Search = () => {
   
   const [city, setCity] = useState<string>(""); 
   const [searchCity, setSearchCity] = useState<string>("");
-  const { weatherData, dailyData, loading, error } = useWeather(searchCity);
+  const { weatherData, dailyData, loading, resetData, error} = useWeather(searchCity);
+  const { mode } = useThemeToggle();
 
-  const handleInputChange = (event: any, newValue: string) => {
-    console.log(event)
+  const handleInputChange = (_: any, newValue: string) => {
     setCity(newValue);
   };
 
@@ -23,19 +24,53 @@ const Search = () => {
     setSearchCity(city); 
   };
 
-  return (
-    <div style={{ position: 'fixed', top: 0, width: '100%', backgroundColor: '#fff', zIndex: 1000, padding: '10px'}}>
-      <ToggleButton/>
-      <Autocomplete freeSolo options={possibleCitys} onInputChange={handleInputChange}
-       renderInput={(params) => (
-          <TextField {...params} label="Buscar ciudad" variant="outlined" />
-        )}
+  const handleResetClick = () => {
+    setCity("");
+    setSearchCity("");
+    resetData();
+  };
 
-        filterOptions={(options, { inputValue }) =>  options.filter((option) =>  option.toLowerCase().includes(inputValue.toLowerCase()))}
-        onChange={(event, newValue) => {setCity(newValue || "")}}
+  return (
+    <Box 
+      sx={{
+      position: 'fixed', 
+      top: 0, 
+      width: '100%', 
+      backgroundColor: mode === 'dark' ? '#1e1e1e' : '#fff', 
+      zIndex: 1000, 
+      padding: '10px',
+      color: mode === 'dark' ? '#fff' : '#000',
+    }}
+  >
+      <ToggleButton/>
+      <Autocomplete
+        freeSolo={!weatherData} 
+        options={possibleCitys}
+        value={city}
+        onInputChange={handleInputChange}  
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined"  disabled={!!weatherData}/>
+        )}
+        filterOptions={(options, { inputValue }) =>
+          options.filter((option) =>
+            option.toLowerCase().includes(inputValue.toLowerCase())
+          )
+        }
       />
 
-      <Button style={{marginTop: "2px", width:"20%", alignItems:"start"}} onClick={handleSearchClick} variant="contained" disableElevation>Buscar</Button>
+      {!weatherData && !error ? 
+
+        <Button style={{marginTop: "2px", width:"20%", alignItems:"start"}} onClick={handleSearchClick} variant="contained" disableElevation>Buscar</Button> : error ? ( 
+
+        <Button style={{marginTop: "2px", width:"20%", alignItems:"start"}} onClick={handleResetClick} variant="contained" disableElevation>Resetear</Button>
+
+         ) : weatherData && !error ? ( 
+
+        <Button style={{marginTop: "2px", width:"20%", alignItems:"start"}} onClick={handleResetClick} variant="contained" disableElevation>Resetear</Button>
+         ) :
+
+        null}
+
   
       {loading && 
          <div style={{display:"flex", alignItems:"center", justifyContent: "center"}}> 
@@ -47,7 +82,7 @@ const Search = () => {
           {weatherData && !loading ? (
              <> 
             <h2>Clima actual en {city}</h2>
-            <CityWeatherCard wheaterData={weatherData}/>
+             <CityWeatherCard wheaterData={weatherData}/>
             </>
           ) : null}
 
@@ -59,7 +94,7 @@ const Search = () => {
           ) : null}
       </div>
 
-    </div>
+    </Box>
   );
 };
 

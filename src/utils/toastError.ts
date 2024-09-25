@@ -8,7 +8,7 @@ export const shootErrorToast = (data: string) => {
             autoClose: 2500
         });
     }  
-     toast.error(data, {
+     return toast.error(data, {
         style: { backgroundColor: 'white', color: 'red' },
         pauseOnHover: false,
         autoClose: 2500

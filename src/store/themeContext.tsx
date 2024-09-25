@@ -35,7 +35,7 @@ export const ThemeToggleProvider = ({ children }: ThemeToggleProviderProps) => {
           mode,
           ...(mode === 'dark' && {
             background: {
-              default: '#121212', // Fondo negro en modo oscuro
+              default: '#121212', 
               paper: '#1e1e1e',
             },
             text: {
@@ -47,23 +47,23 @@ export const ThemeToggleProvider = ({ children }: ThemeToggleProviderProps) => {
           MuiTextField: {
             styleOverrides: {
               root: {
-                backgroundColor: '#ffffff', // Fondo blanco para el input en ambos modos
+                backgroundColor: '#ffffff',
                 '& .MuiInputBase-input': {
-                  color: mode === 'dark' ? '#000000' : '#000000', // Texto negro en ambos modos
+                  color: mode === 'dark' ? '#000000' : '#000000',
                 },
                 '& .MuiInputLabel-root': {
-                  color: mode === 'dark' ? '#ffffff' : '#000000', // Color del label (placeholder)
+                  color: mode === 'dark' ? '#ffffff' : '#000000', 
                 },
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: '#ffffff', // Fondo blanco para el input
+                  backgroundColor: '#ffffff',
                   '& fieldset': {
-                    borderColor: '#000000', // Borde negro
+                    borderColor: '#000000', 
                   },
                   '&:hover fieldset': {
-                    borderColor: '#000000', // Borde negro al hacer hover
+                    borderColor: '#000000',
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#000000', // Borde negro cuando el input está enfocado
+                    borderColor: '#000000', 
                   },
                 },
               },

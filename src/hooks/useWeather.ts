@@ -1,49 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { WeatherDataType, DailyDataType, ForecastItem, Weather } from '../types/wheater';
 import handleError from '../utils/handleError';
-import { shootErrorToast } from '../utils/toastError';
 
 const useWeather = (city: string) => {
 
   const [weatherData, setWeatherData] = useState<WeatherDataType | null>(null);
   const [dailyData, setDailyData] = useState<DailyDataType| null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<boolean>(false);
   
 
-  useEffect(() => {
-    const fetchWeather = async () => {
-      if (!city)  return console.log("#");
+  const fetchWeatherData = useMemo(() => {
+    return async () => {
+      if (!city) return;
+
       setLoading(true);
-      setError(null);
+      setError(false);
 
       try {
         const apiKey = import.meta.env.VITE_API_KEY;
-
-        const response = await axios.get(
+        const weatherResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
         );
-        setWeatherData(response.data);
-
-        const forecastResponse = await axios.get(
+        const dailyResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`
         );
 
-        const processedDailyData = getForecastOfNextFiveDays(forecastResponse.data.list);
+        const processedDailyData = getForecastOfNextFiveDays(dailyResponse.data.list);
+        setWeatherData(weatherResponse.data);
         setDailyData(processedDailyData);
-
+        setError(false)
       } catch (err) {
-        setWeatherData(null)
-        setDailyData(null)
-        handleError(err, setLoading)
+        console.log(err)
+        handleError(err, setLoading);
+        setError(true)
       } finally {
         setLoading(false);
       }
     };
-
-    fetchWeather();
   }, [city]);
+
+  useEffect(() => {
+    fetchWeatherData();
+  }, [fetchWeatherData]);
 
   const getForecastOfNextFiveDays = (forecastList: ForecastItem[]) => {
     const dailyData: { [key: string]: { temp_max: number; temp_min: number; weather: Weather[] } } = {};
@@ -65,8 +65,19 @@ const useWeather = (city: string) => {
     return dailyData; 
   };
 
-  return { weatherData, dailyData, loading, error };
+  const resetData = () => {
+    setWeatherData(null);
+    setDailyData(null);
+    setError(false)
+  };
+
+  return { weatherData, dailyData, loading, error, resetData  };
 };
 
 export default useWeather;
 
+
+
+
+
+  
